@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-dep
+  labels:
+    workspace: scalian_training-practica
+spec:
+  selector:
+    matchLabels:
+      app: database
+      workspace: scalian_training-practica
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: database
+        workspace: scalian_training-practica
+    spec:
+      containers:
+      - image: mysql:5.7
+        name: mysql
+        env:
+        - name: MYSQL_DATABASE
+          value: "knights"
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-root-user-secret
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d
+        - name: mysql-volume
+          mountPath: /var/lib/mysql
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: mysql-initdb
+        configMap:
+          name: practica-db-initdb-config
+      - name: mysql-volume
+        persistentVolumeClaim:
+          claimName: practica-db-pv-claim

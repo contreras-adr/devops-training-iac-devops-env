@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-flask-app-dep-2
+  labels:
+    workspace: scalian_training-practica
+spec:
+  selector:
+    matchLabels:
+      app: my-flask-app
+      workspace: scalian_training-practica
+  strategy:
+    type: Recreate
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: my-flask-app
+        workspace: scalian_training-practica
+    spec:
+      containers:
+      - image: adrianscalian/scalian_training_flask-app:0.0.2-slim
+        name: flask-app-2
+        env:
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                key: user
+                name: db-root-user-secret
+          - name: DB_PWD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: db-root-user-secret
+          - name: DB_HOST
+            value: database-svc.practica
+          - name: DB_NAME
+            value: knights
+        ports:
+        - containerPort: 5000
+          name: flask-app-port
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"

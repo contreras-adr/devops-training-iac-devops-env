@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-flask-app-dep
+  labels:
+    workspace: scalian-devops-training
+spec:
+  selector:
+    matchLabels:
+      app: my-flask-app
+      workspace: scalian-devops-training
+  strategy:
+    type: Recreate
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: my-flask-app
+        workspace: scalian-devops-training
+    spec:
+      initContainers:
+      # an init containers that create directory
+      - name: db-init-script
+        image: registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15
+        command: ["psql", "--host", "$DB_HOST", "-U", "$DB_USER", "-d" ,"$DB_NAME", "-p", "5432", "-f", "./opt/init.sql"]
+        volumeMounts:
+          - name: init-script
+            mountPath: /opt
+        env:
+          - name: DB_USER
+            value: postgres
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: postgres-password
+                name: uat-postgresql
+          - name: DB_HOST
+            value: uat-postgresql
+          - name: DB_NAME
+            value: knights
+      containers:
+      - image: contrerasadr/devops-training-flask-app:latest
+        name: flask-app
+        env:
+          - name: DB_USER
+            value: postgres
+          - name: DB_PWD
+            valueFrom:
+              secretKeyRef:
+                key: postgres-password
+                name: uat-postgresql
+          - name: DB_HOST
+            value: uat-postgresql
+          - name: DB_NAME
+            value: knights
+        ports:
+        - containerPort: 5000
+          name: flask-app-port
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      volumes:
+      - name: init-script
+        configMap:
+          name: db-init-script-configmap

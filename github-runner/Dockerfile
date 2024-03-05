@@ -6,24 +6,24 @@ ARG RUNNER_VERSION="2.313.0"
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=Europe/Madrid
 
-# Install required packages
-RUN apt-get update && \
-    apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    gnupg \
-    lsb-release \
-    curl jq build-essential libssl-dev libffi-dev python3 python3-venv python3-dev python3-pip
+# # Install required packages
+# RUN apt-get update && \
+#     apt-get install -y \
+#     apt-transport-https \
+#     ca-certificates \
+#     gnupg \
+#     lsb-release \
+#     curl jq build-essential libssl-dev libffi-dev python3 python3-venv python3-dev python3-pip
 
-# Add Docker's official GPG key
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+# # Add Docker's official GPG key
+# RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
  
-# Add Docker repository
-RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+# # Add Docker repository
+# RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
  
-# Install Docker CE CLI
-RUN apt-get update && \
-    apt-get install -y docker-ce-cli
+# # Install Docker CE CLI
+# RUN apt-get update && \
+#     apt-get install -y docker-ce-cli
 
 
 RUN apt update -y && apt upgrade -y && useradd -m docker

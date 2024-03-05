@@ -87,14 +87,14 @@ services:
     build:
       context: github-runner
       args:
-        RUNNER_VERSION: '2.313.0'
+        RUNNER_VERSION: '2.314.1'
     depends_on:
       - dind
     networks:
       - devops_training_net
     environment:
       REPO: contreras-adr/devops-training-python-project
-      TOKEN: A6CZQVW7GLTXGJNXXWOJTMLFZVIUO
+      TOKEN: A6CZQVQC267WFGXOLAPGV6DF45SJM
       DOCKER_HOST: tcp://docker:2376
       DOCKER_CERT_PATH: /certs/client
       DOCKER_TLS_VERIFY: 1
