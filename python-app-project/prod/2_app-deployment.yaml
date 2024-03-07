@@ -33,9 +33,9 @@ spec:
             valueFrom:
               secretKeyRef:
                 key: postgres-password
-                name: uat-postgresql
+                name: prod-postgresql
           - name: DB_HOST
-            value: uat-postgresql
+            value: prod-postgresql.prod-environment
           - name: DB_NAME
             value: knights
       containers:
@@ -48,9 +48,9 @@ spec:
             valueFrom:
               secretKeyRef:
                 key: postgres-password
-                name: uat-postgresql
+                name: prod-postgresql
           - name: DB_HOST
-            value: uat-postgresql
+            value: prod-postgresql.prod-environment
           - name: DB_NAME
             value: knights
         ports:

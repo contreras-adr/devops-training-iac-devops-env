@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-flask-app-nodeport
+spec:
+  ports:
+  - name: flask-nodeport
+    nodePort: 32760
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: my-flask-app
+    workspace: scalian_training-practica
+  type: NodePort

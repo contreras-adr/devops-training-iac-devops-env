@@ -3,7 +3,7 @@
 
 ## Instalar APP
 ```bash
-kubectl apply -n uat-environment -f 6_my-app-deployment.yaml
+kubectl apply -n prod-environment  -f python-app-project/prod/1_init_db_configmap.yaml
 kubectl describe  deployment my-flask-app
 kubectl get pods -n uat-environment  -l app=my-flask-app
 kubectl logs -n uat-environment  -l app=my-flask-app
@@ -39,7 +39,7 @@ kubectl run mycurlpod -n uat-environment --image=curlimages/curl  --restart=Neve
 # INGRESS
 
 # NODEPORT
-kubectl apply -n practica -f 9_my-app-nodeport.yaml
+kubectl apply -n uat-environment  -f ...
 
 
 ```

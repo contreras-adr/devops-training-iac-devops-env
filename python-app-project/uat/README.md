@@ -30,8 +30,8 @@ kubectl run -it --rm --image=mysql:5.7  -n uat-environment --restart=Never mysql
 
 ## Instalar APP Service
 ```bash
-kubectl apply -n uat-environment  -f 6_my-app-deployment.yaml 
-kubectl apply -n uat-environment  -f 7_my-app-service.yaml
+kubectl apply -n uat-environment  -f python-app-project/uat/6_my-app-deployment.yaml 
+kubectl apply -n uat-environment  -f python-app-project/uat/7_my-app-service.yaml
 ## TTI curl service
 kubectl run mycurlpod -n uat-environment --image=curlimages/curl -it --rm --restart=Never -- sh
 # RUN curl to service

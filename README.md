@@ -25,9 +25,9 @@ cat ~/.ssh/jenkins-github.
 
 ## Instalar cluster k3d
 ```bash
-k3d cluster create devops-training-cluster-2 \
-    --api-port 6443 --servers 1 --agents 2 \
-    -p "32760-32767:32760-32767@server:0 -v /tmp/k3d-2-vol:/tmp/
+k3d cluster create devops-training-cluster \
+    --api-port 6443 --servers 1 --agents 1 \
+    -p "32760-32767:32760-32767@server:0 -v /tmp/k3d-vol:/tmp/
 
 kubectl cluster-info
 kubectl get nodes
@@ -73,7 +73,7 @@ kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 kubectl patch deploy argocd-server -n argocd --type json -p '[{"op": "replace", "path": "/spec/template/spec/containers/0/command", "value": ["argocd-server", "--insecure", "--staticassets","/shared/app"]}]'
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
 ## Get Inital Password
 argocd admin initial-password -n argocd
@@ -93,33 +93,33 @@ argocd admin initial-password -n argocd
 ## Install postgresql In Environments
 ```bash
 #https://docs.bitnami.com/general/infrastructure/postgresql/
-helm install uat-postgresql -n uat-environment oci://registry-1.docker.io/bitnamicharts/postgresql
+helm install prod-postgresql -n prod-environment oci://registry-1.docker.io/bitnamicharts/postgresql
 
 # PostgreSQL can be accessed via port 5432 on the following DNS names from within your cluster:
-#     uat-postgresql.uat-environment.svc.cluster.local - Read/Write connection
+#     prod-postgresql.prod-environment.svc.cluster.local - Read/Write connection
 
 # To get the password for "postgres" run:
-export POSTGRES_PASSWORD=$(kubectl get secret --namespace uat-environment uat-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)
+export POSTGRES_PASSWORD=$(kubectl get secret --namespace prod-environment prod-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)
 # YjNRM0taVWw1aw==
 
 # To connect to your database run the following command
-kubectl run uat-postgresql-client --rm --tty -i --restart='Never' --namespace uat-environment --image registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15 --env="PGPASSWORD=$POSTGRES_PASSWORD" \
- --command -- psql --host uat-postgresql -U postgres -d postgres -p 5432
+kubectl run prod-postgresql-client --rm --tty -i --restart='Never' --namespace prod-environment --image registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15 --env="PGPASSWORD=$POSTGRES_PASSWORD" \
+ --command -- psql --host prod-postgresql -U postgres -d postgres -p 5432
 
 
 DB_NAME=knights
  # To drop a db
-kubectl run uat-postgresql-client --rm --tty -i --restart='Never' --namespace uat-environment --image registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15 --env="PGPASSWORD=$POSTGRES_PASSWORD" \
- --command -- dropdb -f ${DB_NAME} --if-exists --host uat-postgresql -U postgres  -p 5432 
+kubectl run prod-postgresql-client --rm --tty -i --restart='Never' --namespace prod-environment --image registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15 --env="PGPASSWORD=$POSTGRES_PASSWORD" \
+ --command -- dropdb -f ${DB_NAME} --if-exists --host prod-postgresql -U postgres  -p 5432 
 
   # To create a db
-kubectl run uat-postgresql-client --rm --tty -i --restart='Never' --namespace uat-environment --image registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15 --env="PGPASSWORD=$POSTGRES_PASSWORD" \
- --command -- psql --host uat-postgresql -U postgres  -p 5432  -tc "create database ${DB_NAME}"
+kubectl run prod-postgresql-client --rm --tty -i --restart='Never' --namespace prod-environment --image registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15 --env="PGPASSWORD=$POSTGRES_PASSWORD" \
+ --command -- psql --host prod-postgresql -U postgres  -p 5432  -tc "create database ${DB_NAME}"
 
  ##Execute DDL
- kubectl run uat-postgresql-client --rm --tty -i --restart='Never' --namespace uat-environment --image registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15 --env="PGPASSWORD=$POSTGRES_PASSWORD" \
- --command -- psql --host uat-postgresql -U postgres -d ${DB_NAME} -p 5432 -f ./data/init.sql
+ kubectl run prod-postgresql-client --rm --tty -i --restart='Never' --namespace prod-environment --image registry-1.docker.io/bitnami/postgresql:16.2.0-debian-11-r15 --env="PGPASSWORD=$POSTGRES_PASSWORD" \
+ --command -- psql --host prod-postgresql -U postgres -d ${DB_NAME} -p 5432 -f ./data/init.sql
 
- export POSTGRES_PASSWORD=$(kubectl get secret --namespace uat-environment uat-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)
+ export POSTGRES_PASSWORD=$(kubectl get secret --namespace prod-environment prod-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)
 
 ```
