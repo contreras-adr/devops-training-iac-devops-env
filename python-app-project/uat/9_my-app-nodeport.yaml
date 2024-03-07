@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
   - name: flask-nodeport
-    nodePort: 30076
+    nodePort: 32760
     port: 5000
     protocol: TCP
     targetPort: 5000

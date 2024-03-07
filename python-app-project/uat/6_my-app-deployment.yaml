@@ -33,7 +33,7 @@ spec:
                 key: password
                 name: db-root-user-secret
           - name: DB_HOST
-            value: database-svc.practica
+            value: database-svc
           - name: DB_NAME
             value: knights
         ports:
